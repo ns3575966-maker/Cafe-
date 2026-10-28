@@ -1,0 +1,127 @@
+{
+  "entities": {
+    "MenuItem": {
+      "title": "MenuItem",
+      "description": "Cafe menu item definition",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string", "maxLength": 100 },
+        "price": { "type": "number" },
+        "category": { "type": "string", "enum": ["Coffee", "Tea", "Cold Drinks", "Snacks", "Desserts"] },
+        "description": { "type": "string", "maxLength": 300 },
+        "image": { "type": "string" },
+        "popular": { "type": "boolean" },
+        "available": { "type": "boolean" }
+      },
+      "required": ["id", "name", "price", "category"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer table or takeaway order",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "tableNumber": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "tax": { "type": "number" },
+        "total": { "type": "number" },
+        "status": { "type": "string", "enum": ["Received", "Preparing", "Ready", "Served", "Cancelled"] },
+        "customerPhone": { "type": "string" },
+        "customerName": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "orderNumber", "tableNumber", "items", "total", "status", "customerPhone"]
+    },
+    "Customer": {
+      "title": "Customer",
+      "description": "Customer CRM and loyalty profile",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "phone": { "type": "string" },
+        "name": { "type": "string" },
+        "stamps": { "type": "number" },
+        "totalVisits": { "type": "number" },
+        "lastVisit": { "type": "string" },
+        "optOutMarketing": { "type": "boolean" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "phone", "stamps", "totalVisits"]
+    },
+    "Reward": {
+      "title": "Reward",
+      "description": "Issued digital reward code",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerName": { "type": "string" },
+        "rewardCode": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "isRedeemed": { "type": "boolean" },
+        "redeemedAt": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "customerPhone", "rewardCode", "isRedeemed"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Comeback marketing campaign outreach",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customerPhone": { "type": "string" },
+        "customerName": { "type": "string" },
+        "offerMessage": { "type": "string" },
+        "status": { "type": "string", "enum": ["Draft", "Opened in WhatsApp", "Confirmed Sent"] },
+        "sentAt": { "type": "string" },
+        "returned": { "type": "boolean" },
+        "returnedAt": { "type": "string" }
+      },
+      "required": ["id", "customerPhone", "status"]
+    },
+    "CafeSettings": {
+      "title": "CafeSettings",
+      "description": "Global cafe configuration and Google review link",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "cafeName": { "type": "string" },
+        "googleReviewUrl": { "type": "string" },
+        "whatsappTemplate": { "type": "string" },
+        "totalTables": { "type": "number" }
+      },
+      "required": ["id", "cafeName", "googleReviewUrl"]
+    }
+  },
+  "firestore": {
+    "/menu_items/{itemId}": {
+      "schema": "MenuItem",
+      "description": "Cafe menu catalog"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Active and past orders"
+    },
+    "/customers/{customerId}": {
+      "schema": "Customer",
+      "description": "Customer profiles and loyalty stamps"
+    },
+    "/rewards/{rewardId}": {
+      "schema": "Reward",
+      "description": "Issued rewards and redemption status"
+    },
+    "/campaigns/{campaignId}": {
+      "schema": "Campaign",
+      "description": "WhatsApp comeback campaign history"
+    },
+    "/settings/config": {
+      "schema": "CafeSettings",
+      "description": "Global cafe settings"
+    }
+  }
+}

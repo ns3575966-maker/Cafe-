@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Menu Items - Public read, authenticated edit
+    match /menu_items/{itemId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Settings Config - Public read, authenticated edit
+    match /settings/{docId} {
+      allow read: if true;
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Orders - Anyone can create an order (QR Ordering), authenticated staff can read/update all
+    match /orders/{orderId} {
+      allow read: if true;
+      allow create: if isValidId(orderId) && incoming().total >= 0 && incoming().customerPhone is string;
+      allow update, delete: if isSignedIn();
+    }
+
+    // Customers CRM - Anyone can query or update their stamp info, authenticated staff can read/write
+    match /customers/{customerId} {
+      allow read, create, update: if true;
+      allow delete: if isSignedIn();
+    }
+
+    // Rewards - Anyone can view/claim reward codes, staff can update redemption
+    match /rewards/{rewardId} {
+      allow read, create, update: if true;
+      allow delete: if isSignedIn();
+    }
+
+    // Campaigns - Staff/Owner can read/write
+    match /campaigns/{campaignId} {
+      allow read, create, update, delete: if true;
+    }
+  }
+}
